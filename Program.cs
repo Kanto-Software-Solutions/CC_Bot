@@ -9,6 +9,7 @@ class MainClass
 
 		while (true)
 		{
+			Console.Clear();
 			Console.WriteLine("**** ¡Candy Crush! ****");
 			Console.WriteLine("Menu: \n\nIniciar \t[I] \nPuntaje \t[P] \nOpciones \t[O] \nSalir    \t[S] \n");
 			string a = Console.ReadLine() ?? "";
@@ -17,7 +18,7 @@ class MainClass
 				case "i":
 					Console.Clear();
 					Console.WriteLine("**** Iniciar ****");
-
+					bot = new Bot();
 					break;
 				case "p":
 					Console.Clear();
