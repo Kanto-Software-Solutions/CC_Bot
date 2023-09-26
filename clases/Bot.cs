@@ -3,7 +3,7 @@ namespace cc_bot.Clases;
 class Bot
 {
 	//Variables
-	Dulce[,] tablero;
+	private Dulce[,] tablero;
 
 	//Agente
 	private void InicializarTablero()
@@ -23,18 +23,33 @@ class Bot
 			}
 		}
 	}
+
+	public void ModificarTablero(int[,] nuevosDulces)
+	{
+		for (int i = 1; i < 10; i++)
+		{
+			for (int j = 1; j < 10; j++)
+			{
+				tablero[i,j].SetColor(1);
+				tablero[i,j].SetTipo(1);
+			}
+		}
+	}
 	private void PrintTablero()
 	{
+		Console.Clear();
 		for (int fila = 0; fila < tablero.GetLength(0); fila++)
 		{
 			for (int columna = 0; columna < tablero.GetLength(1); columna++)
 			{
-				Console.Write(tablero[fila, columna].GetColor() + " ");
+				int d_color = tablero[fila, columna].GetColor();
+				int d_tipo = tablero[fila, columna].GetTipo();
+				Console.Write($"{d_color}{d_tipo} ");
 			}
-			Console.WriteLine(); // Salto de línea después de cada fila
+			Console.WriteLine("\t "); // Salto de línea después de cada fila
 		}
 	}
-	public int[] Movimiento()
+	public int[] DecidirMovimiento()
 	{
 		int[] movimiento = new int[2];
 

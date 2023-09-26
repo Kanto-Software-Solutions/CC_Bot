@@ -27,13 +27,21 @@ class Dulce{
 		this.color = color;
 		this.tipo = tipo;
 	}
-	//Getters
+	//Getters y Setters
 	public int GetColor()
 	{
 		return color;
 	}
+	public void SetColor(int color)
+	{
+		this.color = color;
+	}
 	public int GetTipo()
 	{
 		return tipo;
+	}
+	public void SetTipo(int tipo)
+	{
+		this.tipo = tipo;
 	}
 }

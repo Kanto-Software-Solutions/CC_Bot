@@ -1,5 +1,4 @@
-﻿using cc_bot.clases;
-
+﻿using cc_bot.Clases;
 
 class MainClass
 {
