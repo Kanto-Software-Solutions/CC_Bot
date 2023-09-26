@@ -146,20 +146,11 @@ class Bot
 			//Valor real
 			d8 = GetDulcedeTablero(fila, columna + 2);
 		}
-		/*
-				Console.WriteLine("      " + d2.GetColor() + "" + d2.GetTipo());
-				Console.WriteLine("      " + d1.GetColor() + "" + d1.GetTipo());
-				Console.WriteLine(d6.GetColor() + "" + d6.GetTipo() + " " + d5.GetColor() + "" + d5.GetTipo() + " XX " + d7.GetColor() + "" + d7.GetTipo() + " " + d8.GetColor() + "" + d8.GetTipo());
-				Console.WriteLine("      " + d3.GetColor() + "" + d3.GetTipo());
-				Console.WriteLine("      " + d4.GetColor() + "" + d4.GetTipo());
-				Console.WriteLine();
-		*/
 		return new Dulce[] { d1, d2, d3, d4, d5, d6, d7, d8 };
 	}
 	public int[] DecidirMovimiento()
 	{
 		//[xOrigen,yOrigen,xDestino,yDestino,puntaje]
-		Dulce dPrueba;
 
 		int puntaje = 0;
 
@@ -168,40 +159,37 @@ class Bot
 
 		int xDestino = 0;
 		int yDestino = 0;
-		/*
-				//Verificar Movimientos Premium
-				for (int i = 1; i < 10; i++)
+
+		//Verificar Movimientos Premium
+		for (int i = 1; i < 10; i++)
+		{
+			for (int j = 1; j < 10; j++)
+			{
+				if (i % 2 == 1 && j % 2 == 1 || i % 2 == 0 && j % 2 == 0)
 				{
-					for (int j = 1; j < 10; j++)
+					int[] premium = VerMovPremium(GetDulcedeTablero(i, j), i, j);
+					if (puntaje < premium[4])
 					{
-						dPrueba = GetDulcedeTablero(i, j);
-						if (i % 2 == 1 && j % 2 == 1 || i % 2 == 0 && j % 2 == 0)
-						{
-							int[] premium = VerMovPremium(dPrueba, i, j);
-							if (puntaje < premium[4])
-							{
-								xOrigen = premium[0];
-								yOrigen = premium[1];
-								xDestino = premium[2];
-								yDestino = premium[3];
-								puntaje = premium[4];
-							}
-							if (puntaje >= 11)
-							{
-								Console.WriteLine("Origen [" + xOrigen + " " + yOrigen + "] Destino [" + xDestino + "" + yDestino + "] Puntaje [" + puntaje + "]");
-								return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
-							}
-						}
+						xOrigen = premium[0];
+						yOrigen = premium[1];
+						xDestino = premium[2];
+						yDestino = premium[3];
+						puntaje = premium[4];
+					}
+					if (puntaje >= 11)
+					{
+						return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
 					}
 				}
+			}
+		}
 
-				//Si hay un movimiento premium ejecutarlo
-				if (puntaje != 0)
-				{
-					Console.WriteLine("Origen [" + xOrigen + " " + yOrigen + "] Destino [" + xDestino + "" + yDestino + "] Puntaje [" + puntaje + "]");
-					return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
-				}
-		*/
+		//Si hay un movimiento premium ejecutarlo
+		if (puntaje != 0)
+		{
+			return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
+		}
+
 		//Verificar Movimientos Normales
 		for (int i = 1; i < 10; i++)
 		{
@@ -219,7 +207,6 @@ class Bot
 			}
 		}
 
-		Console.WriteLine("Origen [" + xOrigen + " " + yOrigen + "] Destino [" + xDestino + "" + yDestino + "] Puntaje [" + puntaje + "]");
 		return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
 	}
 	private int[] VerMovPremium(Dulce d_actual, int f_d, int c_d)
@@ -340,14 +327,13 @@ class Bot
 			d7 = colidan[6];
 			d8 = colidan[7];
 
-			nPuntaje = ValidarPuntajeNormal(d_actual,new Dulce[] {d6,d5,d7,d8,d1,d2});
-
+			nPuntaje = ValidarPuntajeNormal(d_actual, new Dulce[] { d6, d5, d7, d8, d1, d2 });
 			if (puntaje < nPuntaje)
 			{
-				fOrigen = da[0];
-				cOrigen = da[1];
-				fDestino = fila;
-				cDestino = columna;
+				fOrigen = fila;
+				cOrigen = columna;
+				fDestino = da[0];
+				cDestino = da[1];
 				puntaje = nPuntaje;
 			}
 		}
@@ -364,14 +350,13 @@ class Bot
 			d7 = colidan[6];
 			d8 = colidan[7];
 
-			nPuntaje = ValidarPuntajeNormal(d_actual,new Dulce[] {d8,d7,d5,d6,d3,d4});
-
+			nPuntaje = ValidarPuntajeNormal(d_actual, new Dulce[] { d8, d7, d5, d6, d3, d4 });
 			if (puntaje < nPuntaje)
 			{
-				fOrigen = db[0];
-				cOrigen = db[1];
-				fDestino = fila;
-				cDestino = columna;
+				fOrigen = fila;
+				cOrigen = columna;
+				fDestino = db[0];
+				cDestino = db[1];
 				puntaje = nPuntaje;
 			}
 		}
@@ -389,14 +374,13 @@ class Bot
 			d7 = colidan[6];
 			d8 = colidan[7];
 
-			nPuntaje = ValidarPuntajeNormal(d_actual,new Dulce[] {d4,d3,d1,d2,d5,d6});
-
+			nPuntaje = ValidarPuntajeNormal(d_actual, new Dulce[] { d4, d3, d1, d2, d5, d6 });
 			if (puntaje < nPuntaje)
 			{
-				fOrigen = di[0];
-				cOrigen = di[1];
-				fDestino = fila;
-				cDestino = columna;
+				fOrigen = fila;
+				cOrigen = columna;
+				fDestino = di[0];
+				cDestino = di[1];
 				puntaje = nPuntaje;
 			}
 		}
@@ -414,21 +398,105 @@ class Bot
 			d7 = colidan[6];
 			d8 = colidan[7];
 
-			nPuntaje = ValidarPuntajeNormal(d_actual,new Dulce[] {d2,d1,d3,d4,d7,d8});
-
+			nPuntaje = ValidarPuntajeNormal(d_actual, new Dulce[] { d2, d1, d3, d4, d7, d8 });
 			if (puntaje < nPuntaje)
 			{
-				fOrigen = dd[0];
-				cOrigen = dd[1];
-				fDestino = fila;
-				cDestino = columna;
+				fOrigen = fila;
+				cOrigen = columna;
+				fDestino = dd[0];
+				cDestino = dd[1];
 				puntaje = nPuntaje;
 			}
 		}
 		return new int[] { fOrigen, cOrigen, fDestino, cDestino, puntaje };
 	}
-	private int ValidarPuntajeNormal(Dulce d_prueba,Dulce[] dulces)
+	private int ValidarPuntajeNormal(Dulce d_prueba, Dulce[] dulces)
 	{
+		//Descartar bombas
+		if (d_prueba.GetTipo() == Dulce.BOMBA ||
+			dulces[0].GetTipo() == Dulce.BOMBA ||
+			dulces[1].GetTipo() == Dulce.BOMBA ||
+			dulces[2].GetTipo() == Dulce.BOMBA ||
+			dulces[3].GetTipo() == Dulce.BOMBA ||
+			dulces[4].GetTipo() == Dulce.BOMBA ||
+			dulces[5].GetTipo() == Dulce.BOMBA)
+		{
+			return 1;
+		}
+
+		//Validar 5 en linea
+		if (dulces[0].GetColor() == d_prueba.GetColor() &&
+			dulces[1].GetColor() == d_prueba.GetColor() &&
+			dulces[2].GetColor() == d_prueba.GetColor() &&
+			dulces[3].GetColor() == d_prueba.GetColor())
+		{
+			return 7;
+		}
+		//Validar T
+		if (dulces[0].GetColor() == d_prueba.GetColor() &&
+			dulces[1].GetColor() == d_prueba.GetColor() &&
+			dulces[4].GetColor() == d_prueba.GetColor() &&
+			dulces[5].GetColor() == d_prueba.GetColor())
+		{
+			return 6;
+		}
+		if (dulces[2].GetColor() == d_prueba.GetColor() &&
+			dulces[3].GetColor() == d_prueba.GetColor() &&
+			dulces[4].GetColor() == d_prueba.GetColor() &&
+			dulces[5].GetColor() == d_prueba.GetColor())
+		{
+			return 6;
+		}
+		//Validar 4 en linea
+		if (dulces[0].GetColor() == d_prueba.GetColor() &&
+			dulces[1].GetColor() == d_prueba.GetColor() &&
+			dulces[2].GetColor() == d_prueba.GetColor())
+		{
+			return 5;
+		}
+		if (dulces[1].GetColor() == d_prueba.GetColor() &&
+			dulces[2].GetColor() == d_prueba.GetColor() &&
+			dulces[3].GetColor() == d_prueba.GetColor())
+		{
+			return 5;
+		}
+		//Validar 3 en linea
+		if (dulces[0].GetColor() == d_prueba.GetColor() &&
+			dulces[1].GetColor() == d_prueba.GetColor())
+		{
+			if (dulces[0].GetTipo() != Dulce.NORMAL || dulces[1].GetTipo() != Dulce.NORMAL || d_prueba.GetTipo() != Dulce.NORMAL)
+			{
+				return 2;
+			}
+			return 4;
+		}
+		if (dulces[1].GetColor() == d_prueba.GetColor() &&
+			dulces[2].GetColor() == d_prueba.GetColor())
+		{
+			if (dulces[1].GetTipo() != Dulce.NORMAL || dulces[2].GetTipo() != Dulce.NORMAL || d_prueba.GetTipo() != Dulce.NORMAL)
+			{
+				return 2;
+			}
+			return 4;
+		}
+		if (dulces[2].GetColor() == d_prueba.GetColor() &&
+			dulces[3].GetColor() == d_prueba.GetColor())
+		{
+			if (dulces[2].GetTipo() != Dulce.NORMAL || dulces[3].GetTipo() != Dulce.NORMAL || d_prueba.GetTipo() != Dulce.NORMAL)
+			{
+				return 2;
+			}
+			return 4;
+		}
+		if (dulces[4].GetColor() == d_prueba.GetColor() &&
+			dulces[5].GetColor() == d_prueba.GetColor())
+		{
+			if (dulces[4].GetTipo() != Dulce.NORMAL || dulces[5].GetTipo() != Dulce.NORMAL || d_prueba.GetTipo() != Dulce.NORMAL)
+			{
+				return 2;
+			}
+			return 4;
+		}
 		return 0;
 	}
 	//Sensor
@@ -443,7 +511,8 @@ class Bot
 		//PrintTableroAleatorio(nuevosDulces);
 		ModificarTablero(nuevosDulces);
 		PrintTablero();
-		DecidirMovimiento();
+		int[] a = DecidirMovimiento();
+		Console.WriteLine($"[{a[0]} {a[1]}]  [{a[2]} {a[3]}] PUNTAJE: {a[4]}");
 		Console.ReadLine();
 	}
 }
