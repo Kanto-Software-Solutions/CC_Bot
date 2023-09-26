@@ -103,12 +103,12 @@ class Bot
 		int xDestino = 0;
 		int yDestino = 0;
 
-		//Verificar Movimientos Premium
 		for (int i = 1; i < 10; i++)
 		{
 			for (int j = 1; j < 10; j++)
 			{
 				dPrueba = GetDulcedeTablero(i, j);
+				//Verificar Movimientos Premium
 				if (i % 2 == 1 && j % 2 == 1 || i % 2 == 0 && j % 2 == 0)
 				{
 					int[] premium = VerMovPremium(dPrueba, i, j);
@@ -124,6 +124,11 @@ class Bot
 					{
 						return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
 					}
+				}
+				//Verificar Movimientos Normales
+				if (puntaje <= 8)
+				{
+					
 				}
 			}
 		}
