@@ -95,7 +95,6 @@ class Bot
 	public int[] DecidirMovimiento()
 	{
 		//[xOrigen,yOrigen,xDestino,yDestino,puntaje]
-		int[] movimiento = new int[5];
 		Dulce dPrueba;
 
 		int puntaje = 0;
@@ -127,37 +126,88 @@ class Bot
 				Console.WriteLine();
 			}
 		}
-		return movimiento;
+		return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
 	}
-	private int[] VerMovPremium(Dulce d_actual,int x_d,int y_d)
+	private int[] VerMovPremium(Dulce d_actual, int x_d, int y_d)
 	{
-		int[] movimiento = new int[] {0,0,0,0,0};
 		Dulce d_prueba;
+		int puntaje = 0;
+		int nPuntaje;
+
+		int xOrigen = 0;
+		int yOrigen = 0;
+
+		int xDestino = 0;
+		int yDestino = 0;
 		//Superior
-		d_prueba = GetDulcedeTablero(x_d,y_d-1);
+		d_prueba = GetDulcedeTablero(x_d, y_d - 1);
+		nPuntaje = ValidarPuntajePremium(d_actual, d_prueba);
+		if (puntaje < nPuntaje)
+		{
+			xOrigen = x_d;
+			yOrigen = y_d;
+			xDestino = x_d;
+			yDestino = y_d - 1;
+			puntaje = nPuntaje;
+		}
 		//Inferior
-		d_prueba = GetDulcedeTablero(x_d,y_d+1);
+		d_prueba = GetDulcedeTablero(x_d, y_d + 1);
+		if (puntaje < nPuntaje)
+		{
+			xOrigen = x_d;
+			yOrigen = y_d;
+			xDestino = x_d;
+			yDestino = y_d + 1;
+			puntaje = nPuntaje;
+		}
 		//Izq
-		d_prueba = GetDulcedeTablero(x_d-1,y_d);
+		d_prueba = GetDulcedeTablero(x_d - 1, y_d);
+		if (puntaje < nPuntaje)
+		{
+			xOrigen = x_d;
+			yOrigen = y_d;
+			xDestino = x_d - 1;
+			yDestino = y_d;
+			puntaje = nPuntaje;
+		}
 		//Derecho
-		d_prueba = GetDulcedeTablero(x_d+1,y_d);
-		return movimiento;
+		d_prueba = GetDulcedeTablero(x_d + 1, y_d);
+		if (puntaje < nPuntaje)
+		{
+			xOrigen = x_d;
+			yOrigen = y_d;
+			xDestino = x_d+1;
+			yDestino = y_d;
+			puntaje = nPuntaje;
+		}
+		return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
 	}
 	private int ValidarPuntajePremium(Dulce actual, Dulce prueba)
 	{
-		if(actual.GetTipo() == Dulce.BOMBA && prueba.GetTipo() == Dulce.BOMBA){
+		if (actual.GetTipo() == Dulce.BOMBA && prueba.GetTipo() == Dulce.BOMBA)
+		{
 			return 13;
-		}else if(actual.GetTipo() == Dulce.BOMBA && prueba.GetTipo() == Dulce.RAYAS || actual.GetTipo() == Dulce.RAYAS && prueba.GetTipo() == Dulce.BOMBA){
+		}
+		else if (actual.GetTipo() == Dulce.BOMBA && prueba.GetTipo() == Dulce.RAYAS || actual.GetTipo() == Dulce.RAYAS && prueba.GetTipo() == Dulce.BOMBA)
+		{
 			return 12;
-		}else if(actual.GetTipo() == Dulce.BOMBA && prueba.GetTipo() == Dulce.PAQUETE || actual.GetTipo() == Dulce.PAQUETE && prueba.GetTipo() == Dulce.BOMBA){
+		}
+		else if (actual.GetTipo() == Dulce.BOMBA && prueba.GetTipo() == Dulce.PAQUETE || actual.GetTipo() == Dulce.PAQUETE && prueba.GetTipo() == Dulce.BOMBA)
+		{
 			return 11;
-		}else if(actual.GetTipo() == Dulce.PAQUETE && prueba.GetTipo() == Dulce.RAYAS || actual.GetTipo() == Dulce.RAYAS && prueba.GetTipo() == Dulce.PAQUETE){
+		}
+		else if (actual.GetTipo() == Dulce.PAQUETE && prueba.GetTipo() == Dulce.RAYAS || actual.GetTipo() == Dulce.RAYAS && prueba.GetTipo() == Dulce.PAQUETE)
+		{
 			return 10;
-		}else if(actual.GetTipo() == Dulce.PAQUETE && prueba.GetTipo() == Dulce.PAQUETE){
+		}
+		else if (actual.GetTipo() == Dulce.PAQUETE && prueba.GetTipo() == Dulce.PAQUETE)
+		{
 			return 9;
-		}else if(actual.GetTipo() == Dulce.RAYAS && prueba.GetTipo() == Dulce.RAYAS){
+		}
+		else if (actual.GetTipo() == Dulce.RAYAS && prueba.GetTipo() == Dulce.RAYAS)
+		{
 			return 8;
-		}	
+		}
 		return 0;
 	}
 	//Sensor
