@@ -1,12 +1,27 @@
+using System.Data.Common;
+
 namespace cc_bot.Clases;
 
 class Bot
 {
 	//Funciones para Pruebas
+	public void PrintTablero()
+	{
+		for (int fila = 0; fila < 11; fila++)
+		{
+			for (int columna = 0; columna < 11; columna++)
+			{
+				int d_color = tablero[fila, columna].GetColor();
+				int d_tipo = tablero[fila, columna].GetTipo();
+				Console.Write($"{d_color}{d_tipo} ");
+			}
+			Console.WriteLine("\t "); // Salto de línea después de cada fila
+		}
+	}
 	public static int[,] GenerarTableroAleatorio()
 	{
 		int[,] matriz = new int[81, 2];
-		
+
 		Random rand = new Random();
 
 		for (int fila = 0; fila < 81; fila++)
@@ -16,7 +31,9 @@ class Bot
 			if (val1 == 7)
 			{
 				val2 = 7;
-			}else{
+			}
+			else
+			{
 				val2 = rand.Next(1, 5);
 			}
 			matriz[fila, 0] = val1; // Valores entre 1 y 7 (inclusive)
@@ -71,24 +88,77 @@ class Bot
 			}
 		}
 	}
-	private void PrintTablero()
+	private Dulce GetDulcedeTablero(int x, int y)
 	{
-		for (int fila = 0; fila < 11; fila++)
-		{
-			for (int columna = 0; columna < 11; columna++)
-			{
-				int d_color = tablero[fila, columna].GetColor();
-				int d_tipo = tablero[fila, columna].GetTipo();
-				Console.Write($"{d_color}{d_tipo} ");
-			}
-			Console.WriteLine("\t "); // Salto de línea después de cada fila
-		}
+		return tablero[x, y];
 	}
 	public int[] DecidirMovimiento()
 	{
-		int[] movimiento = new int[2];
+		//[xOrigen,yOrigen,xDestino,yDestino,puntaje]
+		int[] movimiento = new int[5];
+		Dulce dPrueba;
 
+		int puntaje = 0;
+
+		int xOrigen = 0;
+		int yOrigen = 0;
+
+		int xDestino = 0;
+		int yDestino = 0;
+
+		for (int i = 1; i < 10; i++)
+		{
+			if (i % 2 == 1)
+			{
+				for (int j = 1; j < 10; j += 2)
+				{
+					dPrueba = GetDulcedeTablero(i, j);
+
+				}
+				Console.WriteLine();
+			}
+			else
+			{
+				for (int j = 2; j < 10; j += 2)
+				{
+					dPrueba = GetDulcedeTablero(i, j);
+
+				}
+				Console.WriteLine();
+			}
+		}
 		return movimiento;
+	}
+	private int[] VerMovPremium(Dulce d_actual,int x_d,int y_d)
+	{
+		int[] movimiento = new int[] {0,0,0,0,0};
+		Dulce d_prueba;
+		//Superior
+		d_prueba = GetDulcedeTablero(x_d,y_d-1);
+		//Inferior
+		d_prueba = GetDulcedeTablero(x_d,y_d+1);
+		//Izq
+		d_prueba = GetDulcedeTablero(x_d-1,y_d);
+		//Derecho
+		d_prueba = GetDulcedeTablero(x_d+1,y_d);
+		return movimiento;
+	}
+	private int ValidarPuntajePremium(Dulce actual, Dulce prueba)
+	{
+		if(actual.GetTipo() == Dulce.BOMBA && prueba.GetTipo() == Dulce.BOMBA){
+			return 13;
+		}else if(actual.GetTipo() == Dulce.BOMBA && prueba.GetTipo() == Dulce.RAYAS || actual.GetTipo() == Dulce.RAYAS && prueba.GetTipo() == Dulce.BOMBA){
+			return 12;
+		}else if(actual.GetTipo() == Dulce.BOMBA && prueba.GetTipo() == Dulce.PAQUETE || actual.GetTipo() == Dulce.PAQUETE && prueba.GetTipo() == Dulce.BOMBA){
+			return 11;
+		}else if(actual.GetTipo() == Dulce.PAQUETE && prueba.GetTipo() == Dulce.RAYAS || actual.GetTipo() == Dulce.RAYAS && prueba.GetTipo() == Dulce.PAQUETE){
+			return 10;
+		}else if(actual.GetTipo() == Dulce.PAQUETE && prueba.GetTipo() == Dulce.PAQUETE){
+			return 9;
+		}else if(actual.GetTipo() == Dulce.RAYAS && prueba.GetTipo() == Dulce.RAYAS){
+			return 8;
+		}	
+		return 0;
 	}
 	//Sensor
 
@@ -96,14 +166,11 @@ class Bot
 
 	public Bot()
 	{
-		Console.WriteLine("Hola mundo");
 		tablero = new Dulce[11, 11];
 		InicializarTablero();
-		PrintTablero();
-		
 		int[,] nuevosDulces = GenerarTableroAleatorio();
-		//PrintTableroAleatorio(nuevosDulces);
 		ModificarTablero(nuevosDulces);
 		PrintTablero();
+		DecidirMovimiento();
 	}
 }

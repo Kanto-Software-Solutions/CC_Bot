@@ -14,9 +14,8 @@ class Dulce{
 	public static int AZUL = 6;
 	//Tipo de dulce
 	public static int NORMAL = 1;
-	public static int VERTICAL = 2;
-	public static int HORIZONTAL = 3;
-	public static int PAQUETE = 4;
+	public static int RAYAS = 2;
+	public static int PAQUETE = 3;
 
 	//Valores
 	private int color;
