@@ -26,7 +26,7 @@ class Bot
 
 		for (int fila = 0; fila < 81; fila++)
 		{
-			int val1 = rand.Next(1, 8);
+			int val1 = rand.Next(1, 6);
 			int val2;
 			if (val1 == 7)
 			{
@@ -34,7 +34,7 @@ class Bot
 			}
 			else
 			{
-				val2 = rand.Next(1, 5);
+				val2 = rand.Next(1, 4);
 			}
 			matriz[fila, 0] = val1; // Valores entre 1 y 7 (inclusive)
 			matriz[fila, 1] = val2; // Valores entre 1 y 4 (inclusive)
@@ -105,27 +105,25 @@ class Bot
 		int xDestino = 0;
 		int yDestino = 0;
 
+		//Verificar Movimientos Premium
 		for (int i = 1; i < 10; i++)
 		{
-			if (i % 2 == 1)
+			for (int j = 1; j < 10; j++)
 			{
-				for (int j = 1; j < 10; j += 2)
+				if (i % 2 == 1 && j % 2 == 1 || i % 2 == 0 && j % 2 == 0)
 				{
 					dPrueba = GetDulcedeTablero(i, j);
-
+					Console.Write(VerMovPremium(dPrueba, i, j)[4] + "\t");
 				}
-				Console.WriteLine();
-			}
-			else
-			{
-				for (int j = 2; j < 10; j += 2)
+				else
 				{
-					dPrueba = GetDulcedeTablero(i, j);
-
+					Console.Write("X\t");
 				}
-				Console.WriteLine();
 			}
+			Console.WriteLine();
 		}
+
+
 		return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
 	}
 	private int[] VerMovPremium(Dulce d_actual, int x_d, int y_d)
@@ -152,6 +150,7 @@ class Bot
 		}
 		//Inferior
 		d_prueba = GetDulcedeTablero(x_d, y_d + 1);
+		nPuntaje = ValidarPuntajePremium(d_actual, d_prueba);
 		if (puntaje < nPuntaje)
 		{
 			xOrigen = x_d;
@@ -162,6 +161,7 @@ class Bot
 		}
 		//Izq
 		d_prueba = GetDulcedeTablero(x_d - 1, y_d);
+		nPuntaje = ValidarPuntajePremium(d_actual, d_prueba);
 		if (puntaje < nPuntaje)
 		{
 			xOrigen = x_d;
@@ -172,11 +172,12 @@ class Bot
 		}
 		//Derecho
 		d_prueba = GetDulcedeTablero(x_d + 1, y_d);
+		nPuntaje = ValidarPuntajePremium(d_actual, d_prueba);
 		if (puntaje < nPuntaje)
 		{
 			xOrigen = x_d;
 			yOrigen = y_d;
-			xDestino = x_d+1;
+			xDestino = x_d + 1;
 			yDestino = y_d;
 			puntaje = nPuntaje;
 		}
