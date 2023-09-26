@@ -11,7 +11,7 @@ class MainClass
 		{
 			Console.Clear();
 			Console.WriteLine("**** ¡Candy Crush! ****");
-			Console.WriteLine("Menu: \n\nIniciar \t[I] \nPuntajes \t[P] \nSalir    \t[S] \n");
+			Console.WriteLine("Menu: \n\nIniciar \t[I]	 \nSalir    \t[S] \n");
 			string a = Console.ReadLine() ?? "";
 			switch (a.ToLower())
 			{
@@ -19,10 +19,10 @@ class MainClass
 					Console.Clear();
 					Console.WriteLine("**** Iniciar ****");
 					bot = new Bot();
-					break;
-				case "p":
-					Console.Clear();
-					Console.WriteLine("**** Tabla de puntajes ****");
+					while (true)
+					{
+						if(!bot.Jugar()){break;}
+					}
 					break;
 				case "s":
 					Console.Clear();

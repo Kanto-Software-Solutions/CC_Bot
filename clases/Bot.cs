@@ -1,4 +1,7 @@
 using cc_bot.Clases;
+using System;
+using System.Windows.Forms;
+
 
 class Bot
 {
@@ -56,7 +59,6 @@ class Bot
 			Console.WriteLine(); // Salto de línea después de cada fila
 		}
 	}
-
 
 	//Agente
 	private void InicializarTablero()
@@ -502,23 +504,35 @@ class Bot
 		return 0;
 	}
 	//Sensor
-	
-	//Actuador
+	public bool Jugar()
+	{
+		int[,] nuevosDulces = CandyColorMapper.GetBoard();
+		ModificarTablero(nuevosDulces);
+		PrintTablero();
+		int[] a = DecidirMovimiento();
+		Console.WriteLine($"[{a[0]} {a[1]}]  [{a[2]} {a[3]}] PUNTAJE: {a[4]}");
 
+		return true;
+	}
+	//Actuador
+	static void MoverMouse(int x, int y)
+	{
+		Cursor.Position = new System.Drawing.Point(x, y);
+	}
 	//Constructor
 	public Bot()
 	{
 		tablero = new Dulce[11, 11];
 		InicializarTablero();
 		//PrintTablero();
-		
+
 		int[,] nuevosDulces = CandyColorMapper.GetBoard();
-		
+
 		ModificarTablero(nuevosDulces);
 		PrintTablero();
 		int[] a = DecidirMovimiento();
 		Console.WriteLine($"[{a[0]} {a[1]}]  [{a[2]} {a[3]}] PUNTAJE: {a[4]}");
 		Console.ReadLine();
-		
+
 	}
 }

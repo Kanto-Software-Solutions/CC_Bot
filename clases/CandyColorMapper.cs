@@ -93,14 +93,14 @@ public class CandyColorMapper
 				Rectangle rect = new Rectangle(col * 71, row * 63, 71, 63);
 				Bitmap cell = gameBitmap.Clone(rect, gameBitmap.PixelFormat);
 				
-				cell.Save("cell " + row.ToString() + col.ToString() + ".png", ImageFormat.Png);
+				//cell.Save("cell " + row.ToString() + col.ToString() + ".png", ImageFormat.Png);
 
-				Console.WriteLine("cell " + row.ToString() + ", " + col.ToString());
+				//Console.WriteLine("cell " + row.ToString() + ", " + col.ToString());
 				Color pixelColor = gameBitmap.GetPixel(centerX, centerY);
 				var cellCol = CalculateAverageColor(cell);
-				Console.WriteLine(cellCol);
+				//Console.WriteLine(cellCol);
 				var dupla = MapColorToCandyType(cellCol);
-				Console.WriteLine(dupla[0].ToString() + dupla[1].ToString());
+				//Console.WriteLine(dupla[0].ToString() + dupla[1].ToString());
 				board[i, 0] = dupla[0];
 				board[i, 1] = dupla[1];
 				i++;
