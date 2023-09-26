@@ -1,7 +1,10 @@
-namespace cc_bot.Clases;
+using cc_bot.Clases;
 
 class Bot
 {
+	//Variables
+	private Dulce[,] tablero;
+
 	//Funciones para Pruebas
 	public void PrintTablero()
 	{
@@ -53,8 +56,7 @@ class Bot
 			Console.WriteLine(); // Salto de línea después de cada fila
 		}
 	}
-	//Variables
-	private Dulce[,] tablero;
+
 
 	//Agente
 	private void InicializarTablero()
@@ -500,21 +502,23 @@ class Bot
 		return 0;
 	}
 	//Sensor
-
+	
 	//Actuador
 
+	//Constructor
 	public Bot()
 	{
 		tablero = new Dulce[11, 11];
 		InicializarTablero();
-		PrintTablero();
-		/*
-		int[,] nuevosDulces = GenerarTableroAleatorio();
-		PrintTableroAleatorio(nuevosDulces);
+		//PrintTablero();
+		
+		int[,] nuevosDulces = CandyColorMapper.GetBoard();
+		
 		ModificarTablero(nuevosDulces);
+		PrintTablero();
 		int[] a = DecidirMovimiento();
 		Console.WriteLine($"[{a[0]} {a[1]}]  [{a[2]} {a[3]}] PUNTAJE: {a[4]}");
 		Console.ReadLine();
-		*/
+		
 	}
 }

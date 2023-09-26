@@ -1,4 +1,4 @@
-namespace cc_bot.Clases;
+using cc_bot.Clases;
 
 class Dulce{
 //Valores estaticos
