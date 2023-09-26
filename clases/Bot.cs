@@ -1,5 +1,3 @@
-using System.Data.Common;
-
 namespace cc_bot.Clases;
 
 class Bot
@@ -110,14 +108,25 @@ class Bot
 		{
 			for (int j = 1; j < 10; j++)
 			{
+				dPrueba = GetDulcedeTablero(i, j);
 				if (i % 2 == 1 && j % 2 == 1 || i % 2 == 0 && j % 2 == 0)
 				{
-					dPrueba = GetDulcedeTablero(i, j);
+					int[] premium = VerMovPremium(dPrueba, i, j);
+					if (puntaje < premium[4])
+					{
+						xOrigen = premium[0];
+						yOrigen = premium[1];
+						xDestino = premium[2];
+						yDestino = premium[3];
+						puntaje = premium[4];
+					}
+					if (puntaje == 13)
+					{
+						return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
+					}
 				}
 			}
 		}
-
-
 		return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
 	}
 	private int[] VerMovPremium(Dulce d_actual, int x_d, int y_d)
