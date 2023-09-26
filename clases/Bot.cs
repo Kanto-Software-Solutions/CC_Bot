@@ -2,6 +2,42 @@ namespace cc_bot.Clases;
 
 class Bot
 {
+	//Funciones para Pruebas
+	public static int[,] GenerarTableroAleatorio()
+	{
+		int[,] matriz = new int[81, 2];
+		
+		Random rand = new Random();
+
+		for (int fila = 0; fila < 81; fila++)
+		{
+			int val1 = rand.Next(1, 8);
+			int val2;
+			if (val1 == 7)
+			{
+				val2 = 7;
+			}else{
+				val2 = rand.Next(1, 5);
+			}
+			matriz[fila, 0] = val1; // Valores entre 1 y 7 (inclusive)
+			matriz[fila, 1] = val2; // Valores entre 1 y 4 (inclusive)
+		}
+		return matriz;
+	}
+	static void PrintTableroAleatorio(int[,] matriz)
+	{
+		int filas = matriz.GetLength(0);
+		int columnas = matriz.GetLength(1);
+
+		for (int fila = 0; fila < filas; fila++)
+		{
+			for (int columna = 0; columna < columnas; columna++)
+			{
+				Console.Write(matriz[fila, columna] + " ");
+			}
+			Console.WriteLine(); // Salto de línea después de cada fila
+		}
+	}
 	//Variables
 	private Dulce[,] tablero;
 
@@ -23,24 +59,23 @@ class Bot
 			}
 		}
 	}
-
 	public void ModificarTablero(int[,] nuevosDulces)
 	{
+		int indice = 0;
 		for (int i = 1; i < 10; i++)
 		{
 			for (int j = 1; j < 10; j++)
 			{
-				tablero[i,j].SetColor(1);
-				tablero[i,j].SetTipo(1);
+				tablero[i, j].SetColor(nuevosDulces[indice, 0]);
+				tablero[i, j].SetTipo(nuevosDulces[indice++, 1]);
 			}
 		}
 	}
 	private void PrintTablero()
 	{
-		Console.Clear();
-		for (int fila = 0; fila < tablero.GetLength(0); fila++)
+		for (int fila = 0; fila < 11; fila++)
 		{
-			for (int columna = 0; columna < tablero.GetLength(1); columna++)
+			for (int columna = 0; columna < 11; columna++)
 			{
 				int d_color = tablero[fila, columna].GetColor();
 				int d_tipo = tablero[fila, columna].GetTipo();
@@ -55,7 +90,6 @@ class Bot
 
 		return movimiento;
 	}
-
 	//Sensor
 
 	//Actuador
@@ -65,6 +99,11 @@ class Bot
 		Console.WriteLine("Hola mundo");
 		tablero = new Dulce[11, 11];
 		InicializarTablero();
+		PrintTablero();
+		
+		int[,] nuevosDulces = GenerarTableroAleatorio();
+		//PrintTableroAleatorio(nuevosDulces);
+		ModificarTablero(nuevosDulces);
 		PrintTablero();
 	}
 }
