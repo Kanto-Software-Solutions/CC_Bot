@@ -113,14 +113,8 @@ class Bot
 				if (i % 2 == 1 && j % 2 == 1 || i % 2 == 0 && j % 2 == 0)
 				{
 					dPrueba = GetDulcedeTablero(i, j);
-					Console.Write(VerMovPremium(dPrueba, i, j)[4] + "\t");
-				}
-				else
-				{
-					Console.Write("X\t");
 				}
 			}
-			Console.WriteLine();
 		}
 
 
