@@ -24,7 +24,7 @@ class Bot
 
 		for (int fila = 0; fila < 81; fila++)
 		{
-			int val1 = rand.Next(1, 6);
+			int val1 = rand.Next(1, 8);
 			int val2;
 			if (val1 == 7)
 			{
@@ -86,9 +86,75 @@ class Bot
 			}
 		}
 	}
-	private Dulce GetDulcedeTablero(int x, int y)
+	private Dulce GetDulcedeTablero(int fila, int columna)
 	{
-		return tablero[x, y];
+		return tablero[fila, columna];
+	}
+	private Dulce[] GetDulcesColidan(int fila, int columna)
+	{
+		Dulce d1, d2, d3, d4, d5, d6, d7, d8;
+		Dulce nulo = new Dulce(Dulce.OCULTO, Dulce.OCULTO);
+
+		//Inmediatos
+		d1 = GetDulcedeTablero(fila - 1, columna);
+		d3 = GetDulcedeTablero(fila + 1, columna);
+		d5 = GetDulcedeTablero(fila, columna - 1);
+		d7 = GetDulcedeTablero(fila, columna + 1);
+
+		//Validacion de nulos
+		//Arriba
+		if (d1.GetTipo() == Dulce.OCULTO)
+		{
+			//Nulo si el de abajo es nulo
+			d2 = nulo;
+		}
+		else
+		{
+			//Valor real
+			d2 = GetDulcedeTablero(fila - 2, columna);
+		}
+		//Abajo
+		if (d3.GetTipo() == Dulce.OCULTO)
+		{
+			//Nulo si el de abajo es nulo
+			d4 = nulo;
+		}
+		else
+		{
+			//Valor real
+			d4 = GetDulcedeTablero(fila + 2, columna);
+		}
+		//Izquierda
+		if (d5.GetTipo() == Dulce.OCULTO)
+		{
+			//Nulo si el de abajo es nulo
+			d6 = nulo;
+		}
+		else
+		{
+			//Valor real
+			d6 = GetDulcedeTablero(fila, columna - 2);
+		}
+		//Derecha
+		if (d7.GetTipo() == Dulce.OCULTO)
+		{
+			//Nulo si el de abajo es nulo
+			d8 = nulo;
+		}
+		else
+		{
+			//Valor real
+			d8 = GetDulcedeTablero(fila, columna + 2);
+		}
+		/*
+		Console.WriteLine("      " + d2.GetColor() + "" + d2.GetTipo());
+		Console.WriteLine("      " + d1.GetColor() + "" + d1.GetTipo());
+		Console.WriteLine(d6.GetColor() + "" + d6.GetTipo() + " " + d5.GetColor() + "" + d5.GetTipo() + " XX " + d7.GetColor() + "" + d7.GetTipo() + " " + d8.GetColor() + "" + d8.GetTipo());
+		Console.WriteLine("      " + d3.GetColor() + "" + d3.GetTipo());
+		Console.WriteLine("      " + d4.GetColor() + "" + d4.GetTipo());
+		Console.WriteLine();
+		*/
+		return new Dulce[] { d1, d2, d3, d4, d5, d6, d7, d8 };
 	}
 	public int[] DecidirMovimiento()
 	{
@@ -120,76 +186,92 @@ class Bot
 						yDestino = premium[3];
 						puntaje = premium[4];
 					}
-					if (puntaje == 13)
+					if (puntaje >= 11)
 					{
 						return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
 					}
 				}
+			}
+		}
+		if (puntaje != 0)
+		{
+			return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
+		}
+		for (int i = 1; i < 10; i++)
+		{
+			for (int j = 1; j < 10; j++)
+			{
 				//Verificar Movimientos Normales
-				if (puntaje <= 8)
+				int[] normal = VerMovNormal(GetDulcedeTablero(i, j), i, j);
+				if (puntaje < normal[4])
 				{
-					
+					xOrigen = normal[0];
+					yOrigen = normal[1];
+					xDestino = normal[2];
+					yDestino = normal[3];
+					puntaje = normal[4];
 				}
 			}
 		}
+		Console.WriteLine("Origen [" + xOrigen + " " + yOrigen + "] Destino [" + xDestino + "" + yDestino + "] Puntaje [" + puntaje + "]");
 		return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
 	}
-	private int[] VerMovPremium(Dulce d_actual, int x_d, int y_d)
+	private int[] VerMovPremium(Dulce d_actual, int f_d, int c_d)
 	{
 		Dulce d_prueba;
 		int puntaje = 0;
 		int nPuntaje;
 
-		int xOrigen = 0;
-		int yOrigen = 0;
+		int fOrigen = 0;
+		int cOrigen = 0;
 
-		int xDestino = 0;
-		int yDestino = 0;
-		//Superior
-		d_prueba = GetDulcedeTablero(x_d, y_d - 1);
-		nPuntaje = ValidarPuntajePremium(d_actual, d_prueba);
-		if (puntaje < nPuntaje)
-		{
-			xOrigen = x_d;
-			yOrigen = y_d;
-			xDestino = x_d;
-			yDestino = y_d - 1;
-			puntaje = nPuntaje;
-		}
-		//Inferior
-		d_prueba = GetDulcedeTablero(x_d, y_d + 1);
-		nPuntaje = ValidarPuntajePremium(d_actual, d_prueba);
-		if (puntaje < nPuntaje)
-		{
-			xOrigen = x_d;
-			yOrigen = y_d;
-			xDestino = x_d;
-			yDestino = y_d + 1;
-			puntaje = nPuntaje;
-		}
+		int fDestino = 0;
+		int cDestino = 0;
 		//Izq
-		d_prueba = GetDulcedeTablero(x_d - 1, y_d);
+		d_prueba = GetDulcedeTablero(f_d, c_d - 1);
 		nPuntaje = ValidarPuntajePremium(d_actual, d_prueba);
 		if (puntaje < nPuntaje)
 		{
-			xOrigen = x_d;
-			yOrigen = y_d;
-			xDestino = x_d - 1;
-			yDestino = y_d;
+			fOrigen = f_d;
+			cOrigen = c_d;
+			fDestino = f_d;
+			cDestino = c_d - 1;
 			puntaje = nPuntaje;
 		}
-		//Derecho
-		d_prueba = GetDulcedeTablero(x_d + 1, y_d);
+		//Der
+		d_prueba = GetDulcedeTablero(f_d, c_d + 1);
 		nPuntaje = ValidarPuntajePremium(d_actual, d_prueba);
 		if (puntaje < nPuntaje)
 		{
-			xOrigen = x_d;
-			yOrigen = y_d;
-			xDestino = x_d + 1;
-			yDestino = y_d;
+			fOrigen = f_d;
+			cOrigen = c_d;
+			fDestino = f_d;
+			cDestino = c_d + 1;
 			puntaje = nPuntaje;
 		}
-		return new int[] { xOrigen, yOrigen, xDestino, yDestino, puntaje };
+		//Arriba
+		d_prueba = GetDulcedeTablero(f_d - 1, c_d);
+		nPuntaje = ValidarPuntajePremium(d_actual, d_prueba);
+		if (puntaje < nPuntaje)
+		{
+			fOrigen = f_d;
+			cOrigen = c_d;
+			fDestino = f_d - 1;
+			cDestino = c_d;
+			puntaje = nPuntaje;
+		}
+		//Abajo
+		d_prueba = GetDulcedeTablero(f_d + 1, c_d);
+		nPuntaje = ValidarPuntajePremium(d_actual, d_prueba);
+		if (puntaje < nPuntaje)
+		{
+			fOrigen = f_d;
+			cOrigen = c_d;
+			fDestino = f_d + 1;
+			cDestino = c_d;
+			puntaje = nPuntaje;
+		}
+		return new int[] { fOrigen, cOrigen, fDestino, cDestino, puntaje };
 	}
 	private int ValidarPuntajePremium(Dulce actual, Dulce prueba)
 	{
@@ -219,6 +301,57 @@ class Bot
 		}
 		return 0;
 	}
+
+	private int[] VerMovNormal(Dulce d_actual, int fila, int columna)
+	{
+		int[] da, db, di, dd;
+		Dulce d1, d2, d3, d4, d5, d6, d7, d8;
+
+
+		int puntaje = 0;
+		int nPuntaje;
+
+		int fOrigen = 0;
+		int cOrigen = 0;
+
+		int fDestino = 0;
+		int cDestino = 0;
+
+		//Posciciones a verificar
+		da = new int[] { fila - 1, columna };
+		db = new int[] { fila + 1, columna };
+		di = new int[] { fila, columna - 1 };
+		dd = new int[] { fila, columna + 1 };
+
+		//Arriba
+		if (GetDulcedeTablero(da[0], da[1]).GetTipo() != Dulce.OCULTO)
+		{
+			Dulce[] colidan = GetDulcesColidan(da[0], da[1]);
+
+			Dulce[] revision = GetDulcesColidan(da[0], da[1]);
+			nPuntaje = ValidarPuntajeNormal(revision);
+			if (puntaje < nPuntaje)
+			{
+				fOrigen = da[0];
+				cOrigen = da[1];
+				fDestino = fila;
+				cDestino = columna;
+				puntaje = nPuntaje;
+			}
+		}
+
+		//Abajo
+
+		//Izquierda
+
+		//Derecha
+
+		return new int[] { fOrigen, cOrigen, fDestino, cDestino, puntaje };
+	}
+	private int ValidarPuntajeNormal(Dulce[] colidan)
+	{
+		return 0;
+	}
 	//Sensor
 
 	//Actuador
@@ -228,6 +361,7 @@ class Bot
 		tablero = new Dulce[11, 11];
 		InicializarTablero();
 		int[,] nuevosDulces = GenerarTableroAleatorio();
+		//PrintTableroAleatorio(nuevosDulces);
 		ModificarTablero(nuevosDulces);
 		PrintTablero();
 		DecidirMovimiento();
