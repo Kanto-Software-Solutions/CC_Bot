@@ -507,12 +507,14 @@ class Bot
 	{
 		tablero = new Dulce[11, 11];
 		InicializarTablero();
-		int[,] nuevosDulces = GenerarTableroAleatorio();
-		//PrintTableroAleatorio(nuevosDulces);
-		ModificarTablero(nuevosDulces);
 		PrintTablero();
+		/*
+		int[,] nuevosDulces = GenerarTableroAleatorio();
+		PrintTableroAleatorio(nuevosDulces);
+		ModificarTablero(nuevosDulces);
 		int[] a = DecidirMovimiento();
 		Console.WriteLine($"[{a[0]} {a[1]}]  [{a[2]} {a[3]}] PUNTAJE: {a[4]}");
 		Console.ReadLine();
+		*/
 	}
 }

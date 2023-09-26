@@ -4,14 +4,14 @@ class MainClass
 {
 	static void Main()
 	{
-		Bot bot = new Bot();
+		Bot bot;
 		bool nSalir = false;
 
 		while (true)
 		{
 			Console.Clear();
 			Console.WriteLine("**** ¡Candy Crush! ****");
-			Console.WriteLine("Menu: \n\nIniciar \t[I] \nPuntaje \t[P] \nOpciones \t[O] \nSalir    \t[S] \n");
+			Console.WriteLine("Menu: \n\nIniciar \t[I] \nPuntajes \t[P] \nSalir    \t[S] \n");
 			string a = Console.ReadLine() ?? "";
 			switch (a.ToLower())
 			{
@@ -23,10 +23,6 @@ class MainClass
 				case "p":
 					Console.Clear();
 					Console.WriteLine("**** Tabla de puntajes ****");
-					break;
-				case "o":
-					Console.Clear();
-					Console.WriteLine("**** Opciones ****");
 					break;
 				case "s":
 					Console.Clear();
