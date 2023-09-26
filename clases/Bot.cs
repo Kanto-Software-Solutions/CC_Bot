@@ -1,4 +1,4 @@
-namespace cc_bot.clases;
+namespace cc_bot.Clases;
 
 class Bot
 {
