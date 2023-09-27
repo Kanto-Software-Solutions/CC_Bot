@@ -68,7 +68,7 @@ class Bot
 		SetCursorPos(targetX, targetY);
 	}
 
-	public IntPtr gameWindowHandle = FindGameWindow();
+	public static IntPtr gameWindowHandle = FindGameWindow();
 
 
 	private Dulce[,] tablero;
@@ -544,13 +544,11 @@ class Bot
 	//Sensor
 	public bool Jugar()
 	{
-		IntPtr gameWindowHandle = FindGameWindow();
 		int[,] nuevosDulces = CandyColorMapper.GetBoard();
 		ModificarTablero(nuevosDulces);
-		PrintTablero();
+		//PrintTablero();
 		int[] a = DecidirMovimiento();
-		Console.WriteLine($"[{a[0]} {a[1]}]  [{a[2]} {a[3]}] PUNTAJE: {a[4]}");
-
+		//Console.WriteLine($"[{a[0]} {a[1]}]  [{a[2]} {a[3]}] PUNTAJE: {a[4]}");
 		if (gameWindowHandle != IntPtr.Zero)
 		{
 			MoveCursorWithinGame(gameWindowHandle, a[1] * 10, a[0] * 10);
@@ -569,8 +567,6 @@ class Bot
 			Console.WriteLine("window not found.");
 		}
 		Clic();
-		
-
 		return true;
 	}
 	//Actuador
@@ -588,6 +584,16 @@ class Bot
 			// Iniciar el proceso
 			proceso.Start();
 			proceso.WaitForInputIdle();
+			Thread.Sleep(5000);
+			if (gameWindowHandle != IntPtr.Zero)
+			{
+				MoveCursorWithinGame(gameWindowHandle, 5 * 10, 5 * 10);
+			}
+			else
+			{
+				Console.WriteLine("window not found.");
+			}
+			Clic();
 		}
 		else
 		{
@@ -607,7 +613,7 @@ class Bot
 		// Simula un clic izquierdo del mouse
 		mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // Presiona el botón izquierdo
 		mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);   // Libera el botón izquierdo
-		Thread.Sleep(5);
+		Thread.Sleep(20);
 	}
 
 	//Constructor

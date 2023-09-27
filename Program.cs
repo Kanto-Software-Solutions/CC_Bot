@@ -20,7 +20,7 @@ class MainClass
 					Console.WriteLine("**** Iniciar ****");
 					bot = new Bot();
 					Bot.AbrirJuego();
-					Thread.Sleep(10000);
+					Thread.Sleep(3000);
 					while (true)
 					{
 						if(!bot.Jugar()){break;}
