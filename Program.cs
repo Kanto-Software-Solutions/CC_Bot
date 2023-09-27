@@ -19,6 +19,8 @@ class MainClass
 					Console.Clear();
 					Console.WriteLine("**** Iniciar ****");
 					bot = new Bot();
+					Bot.AbrirJuego();
+					Thread.Sleep(10000);
 					while (true)
 					{
 						if(!bot.Jugar()){break;}

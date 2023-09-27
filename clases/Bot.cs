@@ -1,11 +1,76 @@
 using cc_bot.Clases;
-using System;
-using System.Windows.Forms;
 
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Threading;
+//using InputSimulator.Standard;
+//using InputSimulator.Standard.Types;
 
 class Bot
 {
 	//Variables
+	[StructLayout(LayoutKind.Sequential)]
+	public struct Rect
+	{
+		public int left;
+		public int top;
+		public int right;
+		public int bottom;
+	}
+	private const int SW_RESTORE = 9;
+
+	[DllImport("user32.dll")]
+	private static extern int SetForegroundWindow(IntPtr hWnd);
+
+
+	[DllImport("user32.dll")]
+	private static extern IntPtr ShowWindow(IntPtr hWnd, int nCmdShow);
+	[DllImport("user32.dll")]
+	public static extern bool SetCursorPos(int X, int Y);
+	[DllImport("user32.dll")]
+	public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+	[DllImport("user32.dll")]
+	public static extern IntPtr GetWindowRect(IntPtr hWnd, ref Rect rect);
+
+	public static IntPtr FindGameWindow()
+	{
+		Process[] processes = Process.GetProcessesByName("flashplayer_32_sa");
+		if (processes.Length > 0)
+		{
+			return processes[0].MainWindowHandle;
+		}
+		return IntPtr.Zero; // Return IntPtr.Zero if Firefox is not found
+	}
+
+	public static void MoveCursorWithinGame(IntPtr gameWindowHandle, int x, int y)
+	{
+		Process proc = Process.GetProcessesByName("flashplayer_32_sa")[0];
+
+		SetForegroundWindow(proc.MainWindowHandle);
+		ShowWindow(proc.MainWindowHandle, SW_RESTORE);
+
+		Rect windowRect = new Rect();
+
+		IntPtr error = GetWindowRect(proc.MainWindowHandle, ref windowRect);
+		// sometimes it gives error.
+		while (error == (IntPtr)0)
+		{
+			error = GetWindowRect(proc.MainWindowHandle, ref windowRect);
+		}
+
+
+		int windowWidth = 639;
+		int windowHeight = 567;
+
+		int targetX = windowRect.left + 110 + (windowWidth * x / 100); // Adjust as needed
+		int targetY = windowRect.top + 47 + (windowHeight * y / 100); // Adjust as needed
+
+		SetCursorPos(targetX, targetY);
+	}
+
+	public IntPtr gameWindowHandle = FindGameWindow();
+
+
 	private Dulce[,] tablero;
 
 	//Funciones para Pruebas
@@ -20,43 +85,6 @@ class Bot
 				Console.Write($"{d_color}{d_tipo} ");
 			}
 			Console.WriteLine("\t "); // Salto de línea después de cada fila
-		}
-	}
-	public static int[,] GenerarTableroAleatorio()
-	{
-		int[,] matriz = new int[81, 2];
-
-		Random rand = new Random();
-
-		for (int fila = 0; fila < 81; fila++)
-		{
-			int val1 = rand.Next(1, 8);
-			int val2;
-			if (val1 == 7)
-			{
-				val2 = 7;
-			}
-			else
-			{
-				val2 = rand.Next(1, 4);
-			}
-			matriz[fila, 0] = val1; // Valores entre 1 y 7 (inclusive)
-			matriz[fila, 1] = val2; // Valores entre 1 y 4 (inclusive)
-		}
-		return matriz;
-	}
-	static void PrintTableroAleatorio(int[,] matriz)
-	{
-		int filas = matriz.GetLength(0);
-		int columnas = matriz.GetLength(1);
-
-		for (int fila = 0; fila < filas; fila++)
-		{
-			for (int columna = 0; columna < columnas; columna++)
-			{
-				Console.Write(matriz[fila, columna] + " ");
-			}
-			Console.WriteLine(); // Salto de línea después de cada fila
 		}
 	}
 
@@ -298,7 +326,6 @@ class Bot
 		}
 		return 0;
 	}
-
 	private int[] VerMovNormal(Dulce d_actual, int fila, int columna)
 	{
 		int[] da, db, di, dd;
@@ -427,6 +454,16 @@ class Bot
 		{
 			return 1;
 		}
+		if (d_prueba.GetTipo() == 8 ||
+			dulces[0].GetTipo() == 8 ||
+			dulces[1].GetTipo() == 8 ||
+			dulces[2].GetTipo() == 8 ||
+			dulces[3].GetTipo() == 8 ||
+			dulces[4].GetTipo() == 8 ||
+			dulces[5].GetTipo() == 8)
+		{
+			return 0;
+		}
 
 		//Validar 5 en linea
 		if (dulces[0].GetColor() == d_prueba.GetColor() &&
@@ -503,36 +540,80 @@ class Bot
 		}
 		return 0;
 	}
+
 	//Sensor
 	public bool Jugar()
 	{
+		IntPtr gameWindowHandle = FindGameWindow();
 		int[,] nuevosDulces = CandyColorMapper.GetBoard();
 		ModificarTablero(nuevosDulces);
 		PrintTablero();
 		int[] a = DecidirMovimiento();
 		Console.WriteLine($"[{a[0]} {a[1]}]  [{a[2]} {a[3]}] PUNTAJE: {a[4]}");
 
+		if (gameWindowHandle != IntPtr.Zero)
+		{
+			MoveCursorWithinGame(gameWindowHandle, a[1] * 10, a[0] * 10);
+		}
+		else
+		{
+			Console.WriteLine("window not found.");
+		}
+		Clic();
+		if (gameWindowHandle != IntPtr.Zero)
+		{
+			MoveCursorWithinGame(gameWindowHandle, a[3] * 10, a[2] * 10);
+		}
+		else
+		{
+			Console.WriteLine("window not found.");
+		}
+		Clic();
+		
+
 		return true;
 	}
 	//Actuador
-	static void MoverMouse(int x, int y)
+	public static void AbrirJuego()
 	{
-		Cursor.Position = new System.Drawing.Point(x, y);
+		string archivoAEjecutar = "./Ejecutables/flashplayer_32_sa.exe";
+		string archivoArgumento = "./Ejecutables/CandyCrush.swf";
+
+		if (System.IO.File.Exists(archivoAEjecutar) && System.IO.File.Exists(archivoArgumento))
+		{
+			// Crear un proceso para ejecutar el archivo .exe con el archivo de argumento
+			Process proceso = new Process();
+			proceso.StartInfo.FileName = archivoAEjecutar;
+			proceso.StartInfo.Arguments = archivoArgumento;
+			// Iniciar el proceso
+			proceso.Start();
+			proceso.WaitForInputIdle();
+		}
+		else
+		{
+			Console.WriteLine("El archivo .exe o el archivo de argumento no existe.");
+		}
 	}
+
+
+	[DllImport("user32.dll")]
+	private static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, int dwExtraInfo);
+	// Constantes para los eventos de clic del mouse
+	private const int MOUSEEVENTF_LEFTDOWN = 0x02;
+	private const int MOUSEEVENTF_LEFTUP = 0x04;
+
+	public static void Clic()
+	{
+		// Simula un clic izquierdo del mouse
+		mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // Presiona el botón izquierdo
+		mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);   // Libera el botón izquierdo
+		Thread.Sleep(5);
+	}
+
 	//Constructor
 	public Bot()
 	{
 		tablero = new Dulce[11, 11];
 		InicializarTablero();
-		//PrintTablero();
-
-		int[,] nuevosDulces = CandyColorMapper.GetBoard();
-
-		ModificarTablero(nuevosDulces);
-		PrintTablero();
-		int[] a = DecidirMovimiento();
-		Console.WriteLine($"[{a[0]} {a[1]}]  [{a[2]} {a[3]}] PUNTAJE: {a[4]}");
-		Console.ReadLine();
-
 	}
 }

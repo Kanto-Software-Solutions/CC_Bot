@@ -77,7 +77,7 @@ public class CandyColorMapper
 		int i = 0;
 
 		Bitmap gameBitmap = CaptureApplication("flashplayer_32_sa");
-		//gameBitmap.Save("xd.png", ImageFormat.Png);
+		gameBitmap.Save("xd.png", ImageFormat.Png);
 
 		int[,] board = new int[81, 2];
 
@@ -90,16 +90,26 @@ public class CandyColorMapper
 				int centerY = (row * 63) + (63 / 2);
 
 				// Get the average pixel color
-				Rectangle rect = new Rectangle(col * 71, row * 63, 71, 63);
-				Bitmap cell = gameBitmap.Clone(rect, gameBitmap.PixelFormat);
+				Rectangle rect1 = new Rectangle((col * 71), (row * 63), 30, 30);
+				Bitmap cell1 = gameBitmap.Clone(rect1, gameBitmap.PixelFormat);
 				
-				//cell.Save("cell " + row.ToString() + col.ToString() + ".png", ImageFormat.Png);
+				Rectangle rect2 = new Rectangle((col * 71)+20, (row * 63)+18, 35, 35);
+				Bitmap cell2 = gameBitmap.Clone(rect2, gameBitmap.PixelFormat);
+				
 
-				//Console.WriteLine("cell " + row.ToString() + ", " + col.ToString());
-				Color pixelColor = gameBitmap.GetPixel(centerX, centerY);
-				var cellCol = CalculateAverageColor(cell);
-				//Console.WriteLine(cellCol);
-				var dupla = MapColorToCandyType(cellCol);
+				cell1.Save("cell1 " + row.ToString() + col.ToString() + ".png", ImageFormat.Png);
+				cell2.Save("cell2 " + row.ToString() + col.ToString() + ".png", ImageFormat.Png);
+
+				Console.WriteLine("cell1 " + row.ToString() + ", " + col.ToString());
+				Console.WriteLine("cell2 " + row.ToString() + ", " + col.ToString());
+				
+				//Color pixelColor = gameBitmap.GetPixel(centerX, centerY);
+				var cellCol1 = CalculateAverageColor(cell1);
+				var cellCol2 = CalculateAverageColor(cell2);
+
+				Console.WriteLine(cellCol1+" "+cellCol2);
+
+				var dupla = MapColorToCandyType(cellCol1, cellCol2);
 				//Console.WriteLine(dupla[0].ToString() + dupla[1].ToString());
 				board[i, 0] = dupla[0];
 				board[i, 1] = dupla[1];
@@ -160,14 +170,20 @@ public class CandyColorMapper
 	}
 
 
-	public static int[] MapColorToCandyType(Color color)
+	public static int[] MapColorToCandyType(Color color1, Color color2)
 	{
-
 		// Extract color components
-		int red = color.R;
-		int blue = color.B;
-		int green = color.G;
+		int red1 = color1.R;
+		int blue1 = color1.B;
+		int green1 = color1.G;
+		int[] candyColor2 = new int[2];
+
+		int red = color2.R;
+		int blue = color2.B;
+		int green = color2.G;
 		int[] candyColor = new int[2];
+
+
 
 		// Map the color to a candy type based on thresholds
 		// RED
@@ -259,7 +275,7 @@ public class CandyColorMapper
 			candyColor[1] = 2;
 			return candyColor; //Purple Striped
 		}
-		else if (red > 100 && red < 140 && green < 75 && green > 45 && blue > 150)
+		else if (red > 100 && red < 140 && green < 70 && green > 45 && blue > 150)
 		{
 			candyColor[0] = 2;
 			candyColor[1] = 1;
@@ -292,8 +308,8 @@ public class CandyColorMapper
 			return candyColor; //Brownie
 		}
 		// If no match is found, return a default value or handle it accordingly
-		candyColor[0] = 0;
-		candyColor[1] = 0;
+		candyColor[0] = 8;
+		candyColor[1] = 8;
 		return candyColor;
 	}
 
