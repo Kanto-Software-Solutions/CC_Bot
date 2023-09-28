@@ -11,19 +11,18 @@ class MainClass
 		{
 			Console.Clear();
 			Console.WriteLine("**** ¡Candy Crush! ****");
-			Console.WriteLine("Menu: \n\nIniciar \t[I]	 \nSalir    \t[S] \n");
+			Console.WriteLine("Menu: \n\nIniciar \t[I]  \nModo    \t[M]\nSalir    \t[S] \n");
+			bot = new Bot();
 			string a = Console.ReadLine() ?? "";
 			switch (a.ToLower())
 			{
 				case "i":
 					Console.Clear();
-					Console.WriteLine("**** Iniciar ****");
-					bot = new Bot();
+					Console.WriteLine("**** ¡Jugando! ****");
 					Bot.AbrirJuego();
-					Thread.Sleep(10000);
 					while (true)
 					{
-						if(!bot.Jugar()){break;}
+						if (!bot.Jugar()) { break; }
 					}
 					break;
 				case "s":
@@ -32,12 +31,31 @@ class MainClass
 					Console.ReadLine();
 					nSalir = true;
 					break;
+				case "m":
+					Console.Clear();
+					Console.WriteLine("**** Modo de ejecucion ****");
+					Console.WriteLine("\n\nDev \t[D]  \nPro \t[P]\n");
+					string modo = Console.ReadLine() ?? "";
+					switch (modo.ToLower())
+					{
+						case "d":
+							bot.SetModo(true);
+							break;
+						case "p":
+							bot.SetModo(false);
+							break;
+						default:
+							Console.WriteLine("[Opcion no valida, intente nuevamente]\n[Enter] para continuar");
+							Console.ReadLine();
+							break;
+					}
+					break;
 				default:
 					Console.WriteLine("[Opcion no valida, intente nuevamente]\n[Enter] para continuar");
 					Console.ReadLine();
 					break;
 			}
-			if(nSalir){break;}
+			if (nSalir) { break; }
 		}
 		Console.Clear();
 	}

@@ -50,7 +50,7 @@ public class CandyColorMapper
 		ShowWindow(proc.MainWindowHandle, SW_RESTORE);
 
 		// You need some amount of delay, but 1 second may be overkill
-		Thread.Sleep(10);
+		Thread.Sleep(20);
 
 		Rect rect = new Rect();
 		IntPtr error = GetWindowRect(proc.MainWindowHandle, ref rect);
@@ -77,7 +77,7 @@ public class CandyColorMapper
 		int i = 0;
 
 		Bitmap gameBitmap = CaptureApplication("flashplayer_32_sa");
-		gameBitmap.Save("xd.png", ImageFormat.Png);
+		//gameBitmap.Save("xd.png", ImageFormat.Png);
 
 		int[,] board = new int[81, 2];
 
@@ -90,24 +90,24 @@ public class CandyColorMapper
 				int centerY = (row * 63) + (63 / 2);
 
 				// Get the average pixel color
-				Rectangle rect1 = new Rectangle((col * 71), (row * 63), 30, 30);
+				Rectangle rect1 = new Rectangle((col * 71), (row * 63), 15, 15);
 				Bitmap cell1 = gameBitmap.Clone(rect1, gameBitmap.PixelFormat);
-				
-				Rectangle rect2 = new Rectangle((col * 71)+20, (row * 63)+18, 35, 35);
+
+				Rectangle rect2 = new Rectangle((col * 71) + 20, (row * 63) + 18, 35, 35);
 				Bitmap cell2 = gameBitmap.Clone(rect2, gameBitmap.PixelFormat);
-				
 
-				cell1.Save("cell1 " + row.ToString() + col.ToString() + ".png", ImageFormat.Png);
-				cell2.Save("cell2 " + row.ToString() + col.ToString() + ".png", ImageFormat.Png);
 
-				Console.WriteLine("cell1 " + row.ToString() + ", " + col.ToString());
-				Console.WriteLine("cell2 " + row.ToString() + ", " + col.ToString());
-				
+				//cell1.Save("cell1 " + row.ToString() + col.ToString() + ".png", ImageFormat.Png);
+				//cell2.Save("cell2 " + row.ToString() + col.ToString() + ".png", ImageFormat.Png);
+
+				//Console.WriteLine("cell1 " + row.ToString() + ", " + col.ToString());
+				//Console.WriteLine("cell2 " + row.ToString() + ", " + col.ToString());
+
 				//Color pixelColor = gameBitmap.GetPixel(centerX, centerY);
 				var cellCol1 = CalculateAverageColor(cell1);
 				var cellCol2 = CalculateAverageColor(cell2);
 
-				Console.WriteLine(cellCol1+" "+cellCol2);
+				//Console.WriteLine(cellCol1 + " " + cellCol2);
 
 				var dupla = MapColorToCandyType(cellCol1, cellCol2);
 				//Console.WriteLine(dupla[0].ToString() + dupla[1].ToString());
@@ -126,8 +126,8 @@ public class CandyColorMapper
 		int red = 0;
 		int green = 0;
 		int blue = 0;
-		int minDiversion = 15; // drop pixels that do not differ by at least minDiversion between color values (white, gray or black)
-		int dropped = 0; // keep track of dropped pixels
+		int minDiversion = 15;  // drop pixels that do not differ by at least minDiversion between color values (white, gray or black)
+		int dropped = 0;        // keep track of dropped pixels
 		long[] totals = new long[] { 0, 0, 0 };
 		int bppModifier = bm.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb ? 3 : 4; // cutting corners, will fail on anything else but 32 and 24 bit images
 
@@ -162,6 +162,7 @@ public class CandyColorMapper
 		}
 
 		int count = width * height - dropped;
+		if (count == 0) count = 1; // prevent divide by zero errors (pure black image
 		int avgR = (int)(totals[2] / count);
 		int avgG = (int)(totals[1] / count);
 		int avgB = (int)(totals[0] / count);
@@ -169,75 +170,73 @@ public class CandyColorMapper
 		return System.Drawing.Color.FromArgb(avgR, avgG, avgB);
 	}
 
-
-	public static int[] MapColorToCandyType(Color color1, Color color2)
+	public static int[] MapColorToCandyType(Color cell1, Color cell2)
 	{
+
 		// Extract color components
-		int red1 = color1.R;
-		int blue1 = color1.B;
-		int green1 = color1.G;
-		int[] candyColor2 = new int[2];
+		int red = cell1.R;
+		int blue = cell1.B;
+		int green = cell1.G;
 
-		int red = color2.R;
-		int blue = color2.B;
-		int green = color2.G;
+		int red2 = cell2.R;
+		int blue2 = cell2.B;
+		int green2 = cell2.G;
 		int[] candyColor = new int[2];
-
-
 
 		// Map the color to a candy type based on thresholds
 		// RED
-		if (red > 135 && red < 170 && blue < 100 && green < 95)
+		if (red2 > 205 && red2 < 230 && blue2 < 81 && blue2 > 65 && green2 < 81 && green2 > 65)
 		{
 			candyColor[0] = 4;
 			candyColor[1] = 2;
 			return candyColor; //Red Striped
 		}
-		else if (red > 170 && blue < 80 && green < 75)
+		else if (red > 120 && blue < 85 && green < 80 && green > 65 && (red2 > 210 && green2 < 55 && blue2 < 55))
 		{
 			candyColor[0] = 4;
 			candyColor[1] = 3;
 			return candyColor; //Red Packet
 		}
-		else if (red > 95 && blue < 91 && green < 81)
+		else if (red2 > 190 && red2 < 205 && green2 < 25 && blue2 < 30)
 		{
 			candyColor[0] = 4;
 			candyColor[1] = 1;
 			return candyColor; //Red
 		}
 		// BLUE
-		else if (blue > 195 && red < 60 && green < 150)
+		else if (blue > 150 && red > 60 && green < 150 && (blue2 < 255 && blue2 > 225 && red2 < 45 && red2 > 20 && green2 > 145 && green2 < 170))
 		{
 			candyColor[0] = 6;
 			candyColor[1] = 3;
 			return candyColor; //Blue Packet
 		}
-		else if (blue < 165 && blue > 130 && red < 75 && red > 55 && green > 100 && green < 130)
+		else if (blue2 < 235 && blue2 > 219 && red2 < 75 && red2 > 55 && green2 > 150 && green2 < 170)
 		{
 			candyColor[0] = 6;
 			candyColor[1] = 2;
 			return candyColor; //Blue Striped
 		}
-		else if (blue > 140 && red < 65 && green < 120)
+
+		else if (blue2 > 230 && red2 < 40 && green2 > 120 && green2 < 135)
 		{
 			candyColor[0] = 6;
 			candyColor[1] = 1;
 			return candyColor; //Blue
 		}
 		// GREEN
-		else if (green > 155 && red < 90 && blue < 80 && blue > 55)
+		else if (red > 65 && red < 85 && green > 110 && green < 135 && blue < 95 && (red2 > 70 && red2 < 100 && green2 > 190 && blue2 < 50))
 		{
 			candyColor[0] = 5;
 			candyColor[1] = 3;
 			return candyColor; //Green Packet
 		}
-		else if (green > 140 && red < 100 && blue < 100 && blue > 60)
+		else if (green2 > 210 && red2 > 100 && red2 < 125 && blue2 < 100 && blue2 > 60)
 		{
 			candyColor[0] = 5;
 			candyColor[1] = 2;
 			return candyColor; //Green Striped
 		}
-		else if (green > 115 && red < 70 && blue < 60)
+		else if (green2 == 160 && red2 == 51 && blue2 == 6)
 		{
 			candyColor[0] = 5;
 			candyColor[1] = 1;
@@ -250,58 +249,58 @@ public class CandyColorMapper
 			candyColor[1] = 3;
 			return candyColor; //Yellow Packet
 		}
-		else if (red > 120 && red < 155 && green < 150 && green > 115 && blue < 100 && blue > 80)
+		else if (red2 > 220 && green2 < 210 && green2 > 185 && blue2 < 75 && blue2 > 55)
 		{
 			candyColor[0] = 1;
 			candyColor[1] = 2;
 			return candyColor; //Yellow Striped
 		}
-		else if (red > 120 && red < 161 && green < 150 && green > 118 && blue < 80)
+		else if (red2 > 235 && red2 < 240 && green2 < 189 && green2 > 183 && blue2 < 8)
 		{
 			candyColor[0] = 1;
 			candyColor[1] = 1;
 			return candyColor; //Yellow 
 		}
 		// PURPLE
-		else if (red > 150 && green < 85 && blue > 200)
+		else if (red > 100 && red < 130 && green < 110 && green > 80 && blue > 140 && (red2 > 180 && red2 < 230 && green2 < 60 && green2 > 30 && blue2 > 210))
 		{
 			candyColor[0] = 2;
 			candyColor[1] = 3;
 			return candyColor; //Purple Packet
 		}
-		else if (red > 100 && red < 140 && green < 110 && green > 75 && blue > 150)
+		else if (red2 > 200 && red2 < 230 && green2 < 110 && green2 > 75 && blue2 > 150)
 		{
 			candyColor[0] = 2;
 			candyColor[1] = 2;
 			return candyColor; //Purple Striped
 		}
-		else if (red > 100 && red < 140 && green < 70 && green > 45 && blue > 150)
+		else if (red2 > 184 && red2 < 195 && green2 < 40 && green2 > 30 && blue2 > 245 && blue2 < 255)
 		{
 			candyColor[0] = 2;
 			candyColor[1] = 1;
 			return candyColor; //Purple
 		}
 		// ORANGE
-		else if (red > 130 && green > 110 && blue > 80)
+		else if (red2 > 230 && green2 > 165 && green2 < 185 && blue2 < 110 && blue2 > 80)
 		{
 			candyColor[0] = 3;
 			candyColor[1] = 2;
 			return candyColor; //Orange Striped
 		}
-		else if (red > 200 && green > 125 && blue < 81)
+		else if (red > 150 && red < 180 && green > 110 && green < 130 && blue < 95 && (red2 > 230 && green2 > 145 && green2 < 170 && blue2 < 47))
 		{
 			candyColor[0] = 3;
 			candyColor[1] = 3;
 			return candyColor; //Orange Packet
 		}
-		else if (red > 125 && green > 89 && blue < 85)
+		else if (red2 > 240 && red2 > 240 && green2 > 129 && green2 < 140 && blue2 > 15 && blue2 < 28)
 		{
 			candyColor[0] = 3;
 			candyColor[1] = 1;
-			return candyColor; //Orange (Bug with Yellow) 
+			return candyColor; //Orange
 		}
 		// BROWNIE
-		else if (red > 70 && red < 100 && green > 60 && green < 100 && blue > 60 && blue < 100)
+		else if (red2 > 100 && red2 < 120 && green2 > 60 && green2 < 80 && blue2 > 40 && blue2 < 70)
 		{
 			candyColor[0] = 7;
 			candyColor[1] = 7;
