@@ -31,6 +31,7 @@ class Bot
 	private const int MOUSEEVENTF_LEFTDOWN = 0x02;
 	private const int MOUSEEVENTF_LEFTUP = 0x04;
 	public static IntPtr gameWindowHandle = FindGameWindow();
+
 	private Dulce[,] tablero;
 	private int[,] tFin = new int[81, 2];
 
@@ -527,7 +528,7 @@ class Bot
 		{
 			return processes[0].MainWindowHandle;
 		}
-		return IntPtr.Zero; // Return IntPtr.Zero if Firefox is not found
+		return IntPtr.Zero;
 	}
 
 	//Actuador
@@ -634,7 +635,6 @@ class Bot
 
 		SetCursorPos(targetX, targetY);
 	}
-
 	//Constructor
 	public Bot()
 	{
